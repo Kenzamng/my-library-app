@@ -1,7 +1,8 @@
 export default function Home() {
   const books = [
     { title: "1984", author: "George Orwell" },
-    { title: "Le Meilleur des Mondes", author: "Aldous Huxley" }
+    { title: "Le Meilleur des Mondes", author: "Aldous Huxley" },
+    { title: "Fahrenheit 451", author: "Ray Bradbury" } // Nouveau livre ajouté
   ];
 
   return (
