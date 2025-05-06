@@ -1,0 +1,34 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git credentialsId: 'github-key', url: 'git@github.com:Kenzamng/my-library-app.git', branch: 'main'
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t my-library-app .'
+      }
+    }
+
+    stage('Export Static') {
+      steps {
+        sh 'docker run --rm -v $(pwd)/out:/app/out my-library-app'
+      }
+    }
+
+    stage('Deploy to FTP') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'ftp-creds', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PASS')]) {
+          sh '''
+            apt-get update && apt-get install -y lftp
+            lftp -u $FTP_USER,$FTP_PASS -e "mirror -R out /public_html/; bye" ftp://ftp.monsite.com
+          '''
+        }
+      }
+    }
+  }
+}
